@@ -4,7 +4,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.1'
+gem 'actionpack', '~> 6.0.1'
+gem 'activemodel', '~> 6.0.1'
+gem 'activerecord', '~> 6.0.1'
+gem 'activesupport', '~> 6.0.1'
+gem 'railties', '~> 6.0.1'
 # Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
