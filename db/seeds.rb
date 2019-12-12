@@ -5,3 +5,10 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+require 'ffaker'
+
+5.times.each do
+  organization = FactoryBot.create(:organization)
+  puts("Create Organization #{organization.name}")
+end
