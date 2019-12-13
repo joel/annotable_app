@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :report do
-    name { "MyString" }
-    content { "MyText" }
-    project { nil }
+    name { FFaker::Product.product_name }
+    content { FFaker::Lorem.paragraph }
+    project 
   end
 end

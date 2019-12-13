@@ -18,6 +18,10 @@ require_dependency Rails.root.join('spec/support/helpers.rb')
   end
   5.times.each do
     project = FactoryBot.create(:project, organization: organization)
-    puts("Create User #{project.name} [#{project.id}]")
+    puts("Create Project #{project.name} [#{project.id}]")
+    5.times.each do
+      report = FactoryBot.create(:report, project: project)
+      puts("Create Report #{report.name} [#{project.id}]")
+    end
   end
 end

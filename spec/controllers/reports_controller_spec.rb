@@ -24,16 +24,25 @@ require 'rails_helper'
 # `rails-controller-testing` gem.
 
 RSpec.describe ReportsController, type: :controller do
+  let(:project) { FactoryBot.create :project }
+  let(:organization) { project.organization }
 
   # This should return the minimal set of attributes required to create a valid
   # Report. As you add validations to Report, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryBot.attributes_for(:report)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    { name: nil }
+  }
+
+  let(:base_params) {
+    {
+      organization_id: organization.id,
+      project_id: project.id
+    }
   }
 
   # This should return the minimal set of values that should be in the session
@@ -43,16 +52,16 @@ RSpec.describe ReportsController, type: :controller do
 
   describe "GET #index" do
     it "returns a success response" do
-      report = Report.create! valid_attributes
-      get :index, params: {}, session: valid_session
+      project.reports.create! valid_attributes
+      get :index, params: base_params.merge({}), session: valid_session
       expect(response).to be_successful
     end
   end
 
   describe "GET #show" do
     it "returns a success response" do
-      report = Report.create! valid_attributes
-      get :show, params: {id: report.to_param}, session: valid_session
+      report = project.reports.create! valid_attributes
+      get :show, params: base_params.merge({id: report.to_param}), session: valid_session
       expect(response).to be_successful
     end
   end
@@ -61,25 +70,25 @@ RSpec.describe ReportsController, type: :controller do
     context "with valid params" do
       it "creates a new Report" do
         expect {
-          post :create, params: {report: valid_attributes}, session: valid_session
-        }.to change(Report, :count).by(1)
+          post :create, params: base_params.merge({report: valid_attributes}), session: valid_session
+        }.to change(project.reports, :count).by(1)
       end
 
       it "renders a JSON response with the new report" do
 
-        post :create, params: {report: valid_attributes}, session: valid_session
+        post :create, params: base_params.merge({report: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(report_url(Report.last))
+        expect(response.content_type).to include('application/json')
+        expect(response.location).to eq(organization_project_report_url(organization, project, project.reports.last))
       end
     end
 
     context "with invalid params" do
       it "renders a JSON response with errors for the new report" do
 
-        post :create, params: {report: invalid_attributes}, session: valid_session
+        post :create, params: base_params.merge({report: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
@@ -87,42 +96,42 @@ RSpec.describe ReportsController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        FactoryBot.attributes_for(:report)
       }
 
       it "updates the requested report" do
-        report = Report.create! valid_attributes
-        put :update, params: {id: report.to_param, report: new_attributes}, session: valid_session
+        report = project.reports.create! valid_attributes
+        put :update, params: base_params.merge({id: report.to_param, report: new_attributes}), session: valid_session
         report.reload
-        skip("Add assertions for updated state")
+        expect(report.name).to eql(new_attributes[:name])
       end
 
       it "renders a JSON response with the report" do
-        report = Report.create! valid_attributes
+        report = project.reports.create! valid_attributes
 
-        put :update, params: {id: report.to_param, report: valid_attributes}, session: valid_session
+        put :update, params: base_params.merge({id: report.to_param, report: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
 
     context "with invalid params" do
       it "renders a JSON response with errors for the report" do
-        report = Report.create! valid_attributes
+        report = project.reports.create! valid_attributes
 
-        put :update, params: {id: report.to_param, report: invalid_attributes}, session: valid_session
+        put :update, params: base_params.merge({id: report.to_param, report: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
 
   describe "DELETE #destroy" do
     it "destroys the requested report" do
-      report = Report.create! valid_attributes
+      report = project.reports.create! valid_attributes
       expect {
-        delete :destroy, params: {id: report.to_param}, session: valid_session
-      }.to change(Report, :count).by(-1)
+        delete :destroy, params: base_params.merge({id: report.to_param}), session: valid_session
+      }.to change(project.reports, :count).by(-1)
     end
   end
 

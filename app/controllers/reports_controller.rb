@@ -1,9 +1,10 @@
 class ReportsController < ApplicationController
+  before_action :get_project
   before_action :set_report, only: [:show, :update, :destroy]
 
   # GET /reports
   def index
-    @reports = Report.all
+    @reports = @project.reports.all
 
     render json: @reports
   end
@@ -15,10 +16,10 @@ class ReportsController < ApplicationController
 
   # POST /reports
   def create
-    @report = Report.new(report_params)
+    @report = @project.reports.build(report_params)
 
     if @report.save
-      render json: @report, status: :created, location: @report
+      render json: @report, status: :created, location: organization_project_report_url(@organization, @project, @report)
     else
       render json: @report.errors, status: :unprocessable_entity
     end
@@ -41,11 +42,16 @@ class ReportsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_report
-      @report = Report.find(params[:id])
+      @report = @project.reports.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def report_params
       params.require(:report).permit(:name, :content, :project_id)
+    end
+
+    def get_project
+      @organization = Organization.find(params.require(:organization_id))
+      @project = @organization.projects.find(params.require(:project_id))
     end
 end
