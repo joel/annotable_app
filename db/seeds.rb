@@ -7,13 +7,17 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 require 'ffaker'
-require_dependency Rails.root.join('spec/support/helpers.rb')  
+require_dependency Rails.root.join('spec/support/helpers.rb')
 
 5.times.each do
   organization = FactoryBot.create(:organization)
-  puts("Create Organization #{organization.name}")
+  puts("Create Organization #{organization.name} [#{organization.id}]")
   5.times.each do
     user = FactoryBot.create(:user, organization: organization)
-    puts("Create User #{user.email}")
+    puts("Create User #{user.email} [#{user.id}]")
+  end
+  5.times.each do
+    project = FactoryBot.create(:project, organization: organization)
+    puts("Create User #{project.name} [#{project.id}]")
   end
 end

@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :project do
-    name { "MyString" }
-    organization { nil }
+    name { FFaker::Company.name }
+    organization
   end
 end
