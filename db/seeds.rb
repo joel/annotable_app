@@ -21,7 +21,11 @@ require_dependency Rails.root.join('spec/support/helpers.rb')
     puts("Create Project #{project.name} [#{project.id}]")
     5.times.each do
       report = FactoryBot.create(:report, project: project)
-      puts("Create Report #{report.name} [#{project.id}]")
+      puts("Create Report #{report.name} [#{report.id}]")
+      5.times.each do
+        note = FactoryBot.create(:note, report: report)
+        puts("Create Note #{note.title} [#{note.id}]")
+      end
     end
   end
 end

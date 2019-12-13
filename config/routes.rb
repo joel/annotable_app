@@ -1,10 +1,11 @@
 # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 Rails.application.routes.draw do
-  resources :notes
   resources :users
   resources :organizations do
     resources :projects do
-      resources :reports
+      resources :reports do
+        resources :notes
+      end
     end
   end
 end

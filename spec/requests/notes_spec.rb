@@ -2,8 +2,13 @@ require 'rails_helper'
 
 RSpec.describe "Notes", type: :request do
   describe "GET /notes" do
+    let(:note)         { FactoryBot.create :note }
+    let(:report)       { note.report }
+    let(:project)      { report.project }
+    let(:organization) { project.organization }
+
     it "works! (now write some real specs)" do
-      get notes_path
+      get organization_project_report_notes_path(organization, project, report)
       expect(response).to have_http_status(200)
     end
   end

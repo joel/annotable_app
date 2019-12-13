@@ -24,16 +24,27 @@ require 'rails_helper'
 # `rails-controller-testing` gem.
 
 RSpec.describe NotesController, type: :controller do
+  let(:report)  { FactoryBot.create :report }
+  let(:project) { report.project }
+  let(:organization) { project.organization }
 
   # This should return the minimal set of attributes required to create a valid
   # Note. As you add validations to Note, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryBot.attributes_for(:note)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    { title: nil }
+  }
+
+  let(:base_params) {
+    {
+      organization_id: organization.id,
+      project_id: project.id,
+      report_id: report.id
+    }
   }
 
   # This should return the minimal set of values that should be in the session
@@ -43,16 +54,16 @@ RSpec.describe NotesController, type: :controller do
 
   describe "GET #index" do
     it "returns a success response" do
-      note = Note.create! valid_attributes
-      get :index, params: {}, session: valid_session
+      report.notes.create! valid_attributes
+      get :index, params: base_params.merge({}), session: valid_session
       expect(response).to be_successful
     end
   end
 
   describe "GET #show" do
     it "returns a success response" do
-      note = Note.create! valid_attributes
-      get :show, params: {id: note.to_param}, session: valid_session
+      note = report.notes.create! valid_attributes
+      get :show, params: base_params.merge({id: note.to_param}), session: valid_session
       expect(response).to be_successful
     end
   end
@@ -61,25 +72,25 @@ RSpec.describe NotesController, type: :controller do
     context "with valid params" do
       it "creates a new Note" do
         expect {
-          post :create, params: {note: valid_attributes}, session: valid_session
-        }.to change(Note, :count).by(1)
+          post :create, params: base_params.merge({note: valid_attributes}), session: valid_session
+        }.to change(report.notes, :count).by(1)
       end
 
       it "renders a JSON response with the new note" do
 
-        post :create, params: {note: valid_attributes}, session: valid_session
+        post :create, params: base_params.merge({note: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(note_url(Note.last))
+        expect(response.content_type).to include('application/json')
+        expect(response.location).to eq(organization_project_report_note_url(organization, project, report, report.notes.last))
       end
     end
 
     context "with invalid params" do
       it "renders a JSON response with errors for the new note" do
 
-        post :create, params: {note: invalid_attributes}, session: valid_session
+        post :create, params: base_params.merge({note: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
@@ -87,42 +98,42 @@ RSpec.describe NotesController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        FactoryBot.attributes_for(:note)
       }
 
       it "updates the requested note" do
-        note = Note.create! valid_attributes
-        put :update, params: {id: note.to_param, note: new_attributes}, session: valid_session
+        note = report.notes.create! valid_attributes
+        put :update, params: base_params.merge({id: note.to_param, note: new_attributes}), session: valid_session
         note.reload
-        skip("Add assertions for updated state")
+        expect(note.title).to eql(new_attributes[:title])
       end
 
       it "renders a JSON response with the note" do
-        note = Note.create! valid_attributes
+        note = report.notes.create! valid_attributes
 
-        put :update, params: {id: note.to_param, note: valid_attributes}, session: valid_session
+        put :update, params: base_params.merge({id: note.to_param, note: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
 
     context "with invalid params" do
       it "renders a JSON response with errors for the note" do
-        note = Note.create! valid_attributes
+        note = report.notes.create! valid_attributes
 
-        put :update, params: {id: note.to_param, note: invalid_attributes}, session: valid_session
+        put :update, params: base_params.merge({id: note.to_param, note: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end
 
   describe "DELETE #destroy" do
     it "destroys the requested note" do
-      note = Note.create! valid_attributes
+      note = report.notes.create! valid_attributes
       expect {
-        delete :destroy, params: {id: note.to_param}, session: valid_session
-      }.to change(Note, :count).by(-1)
+        delete :destroy, params: base_params.merge({id: note.to_param}), session: valid_session
+      }.to change(report.notes, :count).by(-1)
     end
   end
 

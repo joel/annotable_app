@@ -1,9 +1,10 @@
 class NotesController < ApplicationController
+  before_action :get_report
   before_action :set_note, only: [:show, :update, :destroy]
 
   # GET /notes
   def index
-    @notes = Note.all
+    @notes = @report.notes.all
 
     render json: @notes
   end
@@ -15,10 +16,10 @@ class NotesController < ApplicationController
 
   # POST /notes
   def create
-    @note = Note.new(note_params)
+    @note = @report.notes.build(note_params)
 
     if @note.save
-      render json: @note, status: :created, location: @note
+      render json: @note, status: :created, location: organization_project_report_note_url(@organization, @project, @report, @note)
     else
       render json: @note.errors, status: :unprocessable_entity
     end
@@ -41,11 +42,17 @@ class NotesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_note
-      @note = Note.find(params[:id])
+      @note = @report.notes.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def note_params
       params.require(:note).permit(:title, :content, :report_id)
+    end
+
+    def get_report
+      @organization = Organization.find(params.require(:organization_id))
+      @project = @organization.projects.find(params.require(:project_id))
+      @report  = @project.reports.find(params.require(:report_id))
     end
 end
