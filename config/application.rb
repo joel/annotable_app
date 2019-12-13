@@ -40,5 +40,7 @@ module AnnotableApp
     config.middleware.delete ActiveSupport::Cache::Strategy::LocalCache::Middleware
     config.middleware.delete ActionDispatch::ActionableExceptions
     config.middleware.delete ActionDispatch::Callbacks
+
+    config.active_record.schema_format = :sql
   end
 end
