@@ -19,7 +19,7 @@ class ProjectsController < ApplicationController
     @project = @organization.projects.build(project_params)
 
     if @project.save
-      render json: @project, status: :created, location: organization_project_url(id: @project, organization_id: @organization.id)
+      render json: @project, status: :created, location: organization_project_url(id: @project, organization_id: @organization.to_param)
     else
       render json: @project.errors, status: :unprocessable_entity
     end
@@ -51,6 +51,6 @@ class ProjectsController < ApplicationController
     end
 
     def get_organization
-      @organization = Organization.find(params.require(:organization_id))
+      @organization = Organization.find_by_legacy_id(params.require(:organization_id))
     end
 end

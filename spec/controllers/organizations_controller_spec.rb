@@ -29,7 +29,7 @@ RSpec.describe OrganizationsController, type: :controller do
   # Organization. As you add validations to Organization, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryBot.attributes_for(:organization)
+    Fabricate.attributes_for(:organization)
   }
 
   let(:invalid_attributes) {
@@ -43,7 +43,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
   describe "GET #index" do
     it "returns a success response" do
-      Organization.create! valid_attributes
+      FactoryBot.create(:organization)
       get :index, params: {}, session: valid_session
       expect(response).to be_successful
     end
@@ -51,7 +51,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      organization = Organization.create! valid_attributes
+      organization = FactoryBot.create(:organization)
       get :show, params: {id: organization.to_param}, session: valid_session
       expect(response).to be_successful
     end
@@ -70,7 +70,7 @@ RSpec.describe OrganizationsController, type: :controller do
         post :create, params: {organization: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to include('application/json')
-        expect(response.location).to eq(organization_url(Organization.last))
+        expect(response.location).to eq(organization_url(Organization.last.to_param))
       end
     end
 
@@ -87,18 +87,18 @@ RSpec.describe OrganizationsController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        FactoryBot.attributes_for(:organization)
+        Fabricate.attributes_for(:organization)
       }
 
       it "updates the requested organization" do
-        organization = Organization.create! valid_attributes
+        organization = FactoryBot.create(:organization)
         put :update, params: {id: organization.to_param, organization: new_attributes}, session: valid_session
         organization.reload
         expect(organization.name).to eql(new_attributes[:name])
       end
 
       it "renders a JSON response with the organization" do
-        organization = Organization.create! valid_attributes
+        organization = FactoryBot.create(:organization)
 
         put :update, params: {id: organization.to_param, organization: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
@@ -108,7 +108,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
     context "with invalid params" do
       it "renders a JSON response with errors for the organization" do
-        organization = Organization.create! valid_attributes
+        organization = FactoryBot.create(:organization)
 
         put :update, params: {id: organization.to_param, organization: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
@@ -119,7 +119,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
   describe "DELETE #destroy" do
     it "destroys the requested organization" do
-      organization = Organization.create! valid_attributes
+      organization = FactoryBot.create(:organization)
       expect {
         delete :destroy, params: {id: organization.to_param}, session: valid_session
       }.to change(Organization, :count).by(-1)

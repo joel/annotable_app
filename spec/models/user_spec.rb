@@ -5,7 +5,7 @@ RSpec.describe User, type: :model do
 
   context 'valid_attributes' do
     let(:valid_attributes) {
-      FactoryBot.attributes_for(:user)
+      Fabricate.attributes_for(:user)
     }
     let(:attributes) { valid_attributes }
     it { expect(user).to be_valid }
@@ -13,7 +13,7 @@ RSpec.describe User, type: :model do
 
   context 'invalid_attributes' do
     let(:invalid_attributes) {
-      FactoryBot.attributes_for(:user).except(:email)
+      Fabricate.attributes_for(:user).except(:email)
     }
     let(:attributes) { invalid_attributes }
     it { expect(user).not_to be_valid }

@@ -39,7 +39,7 @@ RSpec.describe ProjectsController, type: :controller do
 
   let(:base_params) {
     {
-      organization_id: organization.id,
+      organization_id: organization.to_param
     }
   }
 
@@ -77,7 +77,7 @@ RSpec.describe ProjectsController, type: :controller do
         post :create, params: base_params.merge({project: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to include('application/json')
-        expect(response.location).to eq(organization_project_url(id: organization.projects.last, organization_id: organization.id))
+        expect(response.location).to eq(organization_project_url(id: organization.projects.last.to_param, organization_id: organization.to_param))
       end
     end
 

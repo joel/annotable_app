@@ -18,7 +18,8 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      render json: @user, status: :created, location: @user
+      @user.reload
+      render json: @user, status: :created, location: user_url(@user.to_param)
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -41,7 +42,7 @@ class UsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:id])
+      @user = User.find_by_legacy_id(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

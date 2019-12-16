@@ -1,15 +1,14 @@
 FactoryBot.define do
   factory :user do
-    transient do
-      _attributes { user_attributes }
-      _name  { _attributes[:name] }
-      _email { _attributes[:email] }
+    initialize_with do
+      Fabricate.create(:user).reload
     end
-    name  { _name }
-    email { _email }
 
     trait :with_organization do
       organization
     end
+
+    # set back from the database the instance.legacy_id
+    after(:create) { |instance| instance.reload }
   end
 end

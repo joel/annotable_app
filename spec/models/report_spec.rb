@@ -6,7 +6,7 @@ RSpec.describe Report, type: :model do
 
   context 'valid_attributes' do
     let(:valid_attributes) {
-      FactoryBot.attributes_for(:report)
+      Fabricate.attributes_for(:report)
     }
     let(:attributes) { valid_attributes }
     it { expect(report).to be_valid }
@@ -14,7 +14,7 @@ RSpec.describe Report, type: :model do
 
   context 'invalid_attributes' do
     let(:invalid_attributes) {
-      FactoryBot.attributes_for(:report).except(:name)
+      Fabricate.attributes_for(:report).except(:name)
     }
     let(:attributes) { invalid_attributes }
     it { expect(report).not_to be_valid }

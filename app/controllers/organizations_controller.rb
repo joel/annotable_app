@@ -18,7 +18,8 @@ class OrganizationsController < ApplicationController
     @organization = Organization.new(organization_params)
 
     if @organization.save
-      render json: @organization, status: :created, location: @organization
+      @organization.reload
+      render json: @organization, status: :created, location: organization_url(@organization.to_param)
     else
       render json: @organization.errors, status: :unprocessable_entity
     end
@@ -41,7 +42,7 @@ class OrganizationsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_organization
-      @organization = Organization.find(params[:id])
+      @organization = Organization.find_by_legacy_id(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

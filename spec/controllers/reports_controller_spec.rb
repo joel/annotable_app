@@ -24,14 +24,14 @@ require 'rails_helper'
 # `rails-controller-testing` gem.
 
 RSpec.describe ReportsController, type: :controller do
-  let(:project) { FactoryBot.create :project }
+  let(:project) { FactoryBot.create(:project) }
   let(:organization) { project.organization }
 
   # This should return the minimal set of attributes required to create a valid
   # Report. As you add validations to Report, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryBot.attributes_for(:report)
+    Fabricate.attributes_for(:report)
   }
 
   let(:invalid_attributes) {
@@ -40,7 +40,7 @@ RSpec.describe ReportsController, type: :controller do
 
   let(:base_params) {
     {
-      organization_id: organization.id,
+      organization_id: organization.to_param,
       project_id: project.id
     }
   }
@@ -52,7 +52,7 @@ RSpec.describe ReportsController, type: :controller do
 
   describe "GET #index" do
     it "returns a success response" do
-      project.reports.create! valid_attributes
+      FactoryBot.create(:report, project: project)
       get :index, params: base_params.merge({}), session: valid_session
       expect(response).to be_successful
     end
@@ -60,7 +60,7 @@ RSpec.describe ReportsController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      report = project.reports.create! valid_attributes
+      report = FactoryBot.create(:report, project: project)
       get :show, params: base_params.merge({id: report.to_param}), session: valid_session
       expect(response).to be_successful
     end
@@ -79,7 +79,7 @@ RSpec.describe ReportsController, type: :controller do
         post :create, params: base_params.merge({report: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to include('application/json')
-        expect(response.location).to eq(organization_project_report_url(organization, project, project.reports.last))
+        expect(response.location).to eq(organization_project_report_url(organization.to_param, project, project.reports.last.to_param))
       end
     end
 
@@ -96,18 +96,18 @@ RSpec.describe ReportsController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        FactoryBot.attributes_for(:report)
+        Fabricate.attributes_for(:report).except(:organization_id)
       }
 
       it "updates the requested report" do
-        report = project.reports.create! valid_attributes
+        report = FactoryBot.create(:report, project: project)
         put :update, params: base_params.merge({id: report.to_param, report: new_attributes}), session: valid_session
         report.reload
         expect(report.name).to eql(new_attributes[:name])
       end
 
       it "renders a JSON response with the report" do
-        report = project.reports.create! valid_attributes
+        report = FactoryBot.create(:report, project: project)
 
         put :update, params: base_params.merge({id: report.to_param, report: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:ok)
@@ -117,7 +117,7 @@ RSpec.describe ReportsController, type: :controller do
 
     context "with invalid params" do
       it "renders a JSON response with errors for the report" do
-        report = project.reports.create! valid_attributes
+        report = FactoryBot.create(:report, project: project)
 
         put :update, params: base_params.merge({id: report.to_param, report: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
@@ -128,7 +128,7 @@ RSpec.describe ReportsController, type: :controller do
 
   describe "DELETE #destroy" do
     it "destroys the requested report" do
-      report = project.reports.create! valid_attributes
+      report = FactoryBot.create(:report, project: project)
       expect {
         delete :destroy, params: base_params.merge({id: report.to_param}), session: valid_session
       }.to change(project.reports, :count).by(-1)

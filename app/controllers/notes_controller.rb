@@ -19,7 +19,7 @@ class NotesController < ApplicationController
     @note = @report.notes.build(note_params)
 
     if @note.save
-      render json: @note, status: :created, location: organization_project_report_note_url(@organization, @project, @report, @note)
+      render json: @note, status: :created, location: organization_project_report_note_url(@organization.to_param, @project, @report.to_param, @note)
     else
       render json: @note.errors, status: :unprocessable_entity
     end
@@ -51,8 +51,8 @@ class NotesController < ApplicationController
     end
 
     def get_report
-      @organization = Organization.find(params.require(:organization_id))
+      @organization = Organization.find_by_legacy_id(params.require(:organization_id))
       @project = @organization.projects.find(params.require(:project_id))
-      @report  = @project.reports.find(params.require(:report_id))
+      @report  = @project.reports.find_by_legacy_id(params.require(:report_id))
     end
 end

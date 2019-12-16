@@ -27,12 +27,16 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+gem 'annotable', path: '../annotable' # local development
+gem 'tty-progressbar', require: false # Not loaded by bundler
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'pry-byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'ffaker'
   gem 'factory_bot_rails'
+  gem 'fabrication'
 end
 
 group :development do

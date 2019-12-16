@@ -16,10 +16,11 @@ class ReportsController < ApplicationController
 
   # POST /reports
   def create
-    @report = @project.reports.build(report_params)
+    @report = @project.reports.build(report_params.merge({ organization_id: @organization.id }))
 
     if @report.save
-      render json: @report, status: :created, location: organization_project_report_url(@organization, @project, @report)
+      @report.reload
+      render json: @report, status: :created, location: organization_project_report_url(@organization.to_param, @project, @report.to_param)
     else
       render json: @report.errors, status: :unprocessable_entity
     end
@@ -42,16 +43,16 @@ class ReportsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_report
-      @report = @project.reports.find(params[:id])
+      @report = @project.reports.find_by_legacy_id(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def report_params
-      params.require(:report).permit(:name, :content, :project_id)
+      params.require(:report).permit(:name, :content)
     end
 
     def get_project
-      @organization = Organization.find(params.require(:organization_id))
+      @organization = Organization.find_by_legacy_id(params.require(:organization_id))
       @project = @organization.projects.find(params.require(:project_id))
     end
 end

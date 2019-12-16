@@ -41,9 +41,9 @@ RSpec.describe NotesController, type: :controller do
 
   let(:base_params) {
     {
-      organization_id: organization.id,
+      organization_id: organization.to_param,
       project_id: project.id,
-      report_id: report.id
+      report_id: report.to_param
     }
   }
 
@@ -81,7 +81,7 @@ RSpec.describe NotesController, type: :controller do
         post :create, params: base_params.merge({note: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to include('application/json')
-        expect(response.location).to eq(organization_project_report_note_url(organization, project, report, report.notes.last))
+        expect(response.location).to eq(organization_project_report_note_url(organization.to_param, project, report.to_param, report.notes.last))
       end
     end
 
